@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discover Sonoma Wines</title>
+  <!-- Add any CSS stylesheets or JavaScript files here -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap"> <!-- Playfair Display font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap"> <!-- Libre Baskerville font -->
+  <style>
+    /* Body style */
+    body {
+      font-family: 'Libre Baskerville', serif; /* Main font */
+      background-color: #f8f1e7; 
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navigation bar style */
+    nav {
+      background-color: #6d1710; 
+      padding: 10px 20px;
+    }
+
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      text-align: left; 
+    }
+
+    nav ul li {
+      display: inline;
+      margin-right: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      transition: color 0.3s ease; 
+    }
+
+    nav ul li a:hover {
+      color: #f8f1e7; 
+    }
+
+   
+    h1 {
+      text-align: center;
+      color: #6d1710; 
+      font-family: 'Playfair Display', serif; 
+      font-weight: bold; 
+      margin-top: 0; 
+      margin-bottom: 0px; 
+      font-size: 70px; 
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #6d1710; 
+      font-family: 'Libre Baskerville', serif; 
+      font-weight: bold; 
+      margin-top: 0; 
+      margin-bottom: 20px; 
+    }
+
+    
+    section {
+      padding: 20px;
+      background-color: #b68474; 
+      margin: 10px; 
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
+    }
+
+    /* Map frame style */
+    #map-container {
+      display: flex; 
+    }
+
+    #map-frame {
+      height: 700px; 
+      flex: 1; 
+      margin-right: 20px; 
+      border: 2px solid #6d1710; 
+      border-radius: 10px;
+    }
+
+    /* Legend style */
+    .legend {
+      background-color: #f8f1e7; 
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: 'Libre Baskerville', serif; 
+      font-size: 14px;
+      max-height: 600px; /* Maximum height for legend */
+      overflow-y: auto; /* Enable vertical scroll if needed */
+      flex-basis: 300px; /* Set fixed width for legend */
+    }
+
+    .legend-item {
+      margin-bottom: 5px;
+    }
+
+    .legend-color {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      border: 1px solid #000;
+    }
+
+    /* Logo style */
+    #logo {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      max-width: 100px; 
+      z-index: 9999; /* Ensure it's on top */
+    }
+
+    /* Attribution section style */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    footer p {
+      border-top: 1px solid #6d1710; 
+      padding-top: 20px;
+    }
+
+    /* Popup style */
+    .leaflet-popup-content-wrapper {
+      background-color: #f8f1e7; 
+      color: #6d1710; 
+      font-family: 'Libre Baskerville', serif; /* Libre Baskerville font */
+    }
+
+    .leaflet-popup-tip-container {
+      display: none; 
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation bar -->
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#avas">AVAs</a></li>
+      <li><a href="#about">About</a></li>
+      <!-- Add more tabs as needed -->
+    </ul>
+  </nav>
+
+  <!-- Page content -->
+  <section id="home">
+    <h1>Discover Sonoma Wines</h1>
+    <!-- Add content for the home section -->
+  </section>
+
+  <section id="about">
+    <h2>About Sonoma Wines</h2>
+    <p>Sonoma County, California is renowned for its wine production and scenic vineyards. The region's terroir, characterized by its Mediterranean climate and diverse soils, creates an ideal environment for growing a wide range of grape varieties. Sonoma is home to cool coastal regions and warmer inland valleys. These diverse microclimates provide winemakers with opportunities to craft an array of exceptional wines.</p>
+    <p>The county is home to several American Viticultural Areas (AVAs), each with its own unique characteristics and styles. Among these AVAs are the Russian River Valley, Sonoma Valley, Alexander Valley, and Dry Creek Valley. The Russian River Valley, with its foggy mornings and cool afternoons, is famous for its Pinot Noir and Chardonnay. In contrast, the warmer climate of the Alexander Valley is ideal for Bordeaux varieties such as Cabernet Sauvignon and Merlot.</p>
+    <p>Exploring Sonoma County's AVAs offers wine enthusiasts a journey through diverse landscapes and flavors, from the coastal influence of the Sonoma Coast AVA to the rugged terrain of the Rockpile AVA. Whether you're a seasoned wine connoisseur or a novice enthusiast, Sonoma County has something to offer for every palate.</p>
+    <p>Plan your visit to Sonoma County and experience the beauty and world-class wines that have made it one of the premier wine destinations in the world.</p>
+  </section>
+
+  <section id="avas">
+    <h2>Appellations of Sonoma County</h2>
+    <div id="map-container">
+      <div id="map-frame"></div>
+      <!-- Legend inside the map frame -->
+      <div id="legend" class="legend"></div>
+    </div>
+    <!-- Add information about the AVAs -->
+    <!-- You can include maps, descriptions, and educational content here -->
+  </section>
+
+  <!-- Attribution section -->
+  <footer>
+    <p>Designed by Leon Horne</p>
+    <p>Map data from TTB AVA Map Explorer and Google Maps</p>
+  </footer>
+
+  <!-- Add any JavaScript code here -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map-frame').setView([38.49445345278053, -122.80580655122654], 9); // Set the initial map view with increased zoom
+
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map); // Add OpenStreetMap as the base layer
+
+    // Function to create wine bottle icons
+    function createWineBottleIcon() {
+      return L.divIcon({
+        className: 'wine-bottle-icon',
+        html: '<i class="fa-solid fa-wine-bottle fa-lg"></i>', // Adjusted size
+        iconSize: [50, 50], // Adjusted size
+        iconAnchor: [25, 50], // Adjusted position
+      });
+    }
+
+    // Function to generate a random color for each feature
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Add GeoJSON layers
+    fetch('assets/Sonomajson.geojson')
+      .then(response => response.json())
+      .then(data => {
+        // Sort features based on their area
+        data.features.sort((a, b) => {
+          return b.properties.Area - a.properties.Area;
+        });
+
+        // Draw features and create legend
+        var legendContent = '';
+        data.features.forEach(feature => {
+          // Adjust feature name
+          if (feature.properties.Name === "Moon Mountain District Sonoma Valley") {
+            feature.properties.Name = "Moon Mountain";
+          }
+
+          // Create legend item
+          var featureColor = getRandomColor();
+          legendContent += `
+            <div class="legend-item">
+              <span class="legend-color" style="background-color:${featureColor}"></span>
+              ${feature.properties.Name}
+            </div>
+          `;
+
+          L.geoJSON(feature, {
+            style: function (feature) {
+              return {
+                color: '#000', // Black outline
+                weight: 1, // Thin border
+                fillColor: featureColor, // Random color
+                fillOpacity: 0.6 // Increased transparency by 20%
+              };
+            }, // Apply custom style
+            interactive: true, // Make the feature interactive
+            onEachFeature: function (feature, layer) {
+              layer.on({
+                mouseover: highlightFeature, // Highlight feature on mouseover
+                mouseout: resetHighlight, // Reset highlight on mouseout
+              });
+              layer.bindPopup(createPopupContentSonomajson(feature)); // Bind popup
+            }
+          }).addTo(map);
+        });
+
+        // Add legend to the page
+        document.getElementById('legend').innerHTML = `
+          <h3>Legend</h3>
+          ${legendContent}
+        `;
+      });
+
+    // Add GeoJSON layer for map-8.geojson
+    fetch('assets/map-8.geojson')
+      .then(response => response.json())
+      .then(data => {
+        var vineyardIcon = createWineBottleIcon(); // Create vineyard icon
+        var vineyardLegendItem = `<div class="legend-item"><span class="legend-color" style="background-color:black"></span> Family Owned Vineyards</div>`; // Vineyard legend item
+        data.features.forEach(feature => {
+          L.geoJSON(feature, {
+            pointToLayer: function (feature, latlng) {
+              return L.marker(latlng, {
+                icon: vineyardIcon
+              }).bindPopup(`<div class="popup-content"><h3>${feature.properties.Name}</h3><p><strong>Website:</strong> <a href="${feature.properties.Website}" target="_blank">${feature.properties.Website}</a></p><p><strong>Directions:</strong> <a href="${feature.properties.Directions}" target="_blank">${feature.properties.Directions}</a></p></div>`);;
+            }
+          }).addTo(map);
+        });
+        // Append vineyard legend item to legend
+        document.getElementById('legend').innerHTML += vineyardLegendItem;
+      });
+
+    // Function to highlight features on mouseover
+    function highlightFeature(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+        weight: 3, // Highlighted border width
+        opacity: 1, // Full opacity
+      });
+    }
+
+    // Function to reset highlight on mouseout
+    function resetHighlight(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+        weight: 1, // Reset border width
+        opacity: 1, // Full opacity
+      });
+    }
+
+    // Function to create popup content for Sonomajson.geojson
+    function createPopupContentSonomajson(feature) {
+      return `
+        <div class="popup-content">
+          <h3>${feature.properties.Name}</h3>
+          <p><strong>Varieties:</strong> ${feature.properties.Varieties}</p>
+        </div>
+      `;
+    }
+  </script>
+  <img id="logo" src="assets/logo.png" alt="logo">
+</body>
+</html>
+
+
+
+
+
+
